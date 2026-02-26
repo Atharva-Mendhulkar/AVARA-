@@ -357,18 +357,18 @@ AVARA is a **sidecar / gateway**, not a rewrite.
 ### **7.1 Secure Agent Execution**
 
 ```mermaid
-usecaseDiagram
+sequenceDiagram
 actor User
 actor Agent
 actor AVARA
 actor Tool
 
-User --> Agent : Issues Task
-Agent --> AVARA : Request Action
-AVARA --> AVARA : Validate Intent
-AVARA --> AVARA : Check Permissions
-AVARA --> Tool : Allow / Block Tool Call
-Tool --> Agent : Result
+User ->> Agent : Issues Task
+Agent ->> AVARA : Request Action
+AVARA ->> AVARA : Validate Intent
+AVARA ->> AVARA : Check Permissions
+AVARA ->> Tool : Allow / Block Tool Call
+Tool ->> Agent : Result
 ```
 
 ---
@@ -376,15 +376,15 @@ Tool --> Agent : Result
 ### **7.2 Destructive Action Protection**
 
 ```mermaid
-usecaseDiagram
+sequenceDiagram
 actor Agent
 actor AVARA
 actor Human
 
-Agent --> AVARA : Delete / Send / Exfiltrate
-AVARA --> Human : Approval Request
-Human --> AVARA : Approve / Deny
-AVARA --> Agent : Continue / Halt
+Agent ->> AVARA : Delete / Send / Exfiltrate
+AVARA ->> Human : Approval Request
+Human ->> AVARA : Approve / Deny
+AVARA ->> Agent : Continue / Halt
 ```
 
 ---
