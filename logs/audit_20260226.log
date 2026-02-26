@@ -1,0 +1,6 @@
+2026-02-26 13:48:13,688 - {"timestamp": "2026-02-26T13:48:13.688347", "event_type": "SYSTEM_START", "agent_id": "SYSTEM", "decision": null, "context": {"status": "AVARA starting"}}
+2026-02-26 13:48:13,688 - {"timestamp": "2026-02-26T13:48:13.688466", "event_type": "TOOL_CALL", "agent_id": "agent_123", "decision": null, "context": {"tool": "calculate_math", "args": {"expression": "2+2"}, "result": "Simulated execution allow"}}
+2026-02-26 13:48:13,688 - {"timestamp": "2026-02-26T13:48:13.688525", "event_type": "ACTION_EXECUTE", "agent_id": "agent_123", "decision": "ALLOW", "context": {"action": "read_config"}}
+2026-02-26 13:48:13,688 - {"timestamp": "2026-02-26T13:48:13.688568", "event_type": "APPROVAL_REQUEST", "agent_id": "agent_123", "decision": "DENY", "context": {"action": "delete_file", "target": "file:production.db"}}
+2026-02-26 14:10:01,816 - {"timestamp": "2026-02-26T14:10:01.816255", "event_type": "IAM_PROVISION", "agent_id": "agt_cff71b70", "decision": null, "context": {"role_name": "api_tester", "description": "Integration test agent", "scopes": ["execute:test_tool", "read:logs"], "ttl_seconds": 300}}
+2026-02-26 14:10:01,820 - {"timestamp": "2026-02-26T14:10:01.820438", "event_type": "IAM_REVOKE", "agent_id": "agt_cff71b70", "decision": null, "context": {}}
