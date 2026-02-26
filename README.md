@@ -1183,3 +1183,75 @@ AVARA is considered **correctly implemented** if:
 That is the system’s reason to exist.
 
 ---
+
+## **17. Usage & Operations Guide (Phase 5)**
+
+AVARA is a deployable authority. Here is how to run and interact with the deployed system:
+
+### **1. Containerization (Starting AVARA)**
+AVARA runs as a network sidecar using FastAPI and SQLite. Start the entire system using Docker Compose.
+
+```bash
+# Start the AVARA backend in the background
+docker compose up -d avara-api
+
+# Check the live logs
+docker compose logs -f avara-api
+```
+
+### **2. AVARA CLI (avara-cli)**
+Security engineers use the Python CLI to manage identities and approvals without needing to touch the database or write raw API requests.
+
+```bash
+# Ensure you are in the virtual environment if running locally
+source venv/bin/activate
+
+# 1. Provision a new Agent Identity (returns an HTTP Agent ID and scopes)
+./avara_cli.py provision prod_agent "Production Marketing Agent" --scopes "execute:read_file" "api:query"
+
+# 2. View all high-risk actions currently halted by the Circuit Breaker
+./avara_cli.py pending
+
+# 3. Approve a halted High-Risk Action (Webhooks)
+./avara_cli.py approve <action_id>
+
+# 4. Strictly Deny a halted High-Risk Action
+./avara_cli.py deny <action_id>
+
+# 5. Revoke an Agent Identity
+./avara_cli.py revoke <agent_id>
+```
+
+### **3. Asynchronous Approval Webhooks**
+When the Circuit Breaker detects a `HIGH` risk action (e.g., `transmit_external`), it blocks the LLM and throws an HTTP 403 Forbidden payload containing a unique `action_id`.
+
+The system waits for an external system (like a Slack Bot or the AVARA CLI) to ping the webhook callback to unblock the sequence:
+```bash
+curl -X POST http://127.0.0.1:8000/guard/approvals/<action_id>/approve
+```
+
+### **4. Agent Framework Integrations (LangChain)**
+To protect an agent framework, developers simply attach the AVARA integration adapter.
+
+For LangChain/LangGraph, attach the `AVARALangChainCallback`:
+```python
+from src.integrations.langchain_adapter import AVARALangChainCallback
+from langchain.agents import initialize_agent
+
+# Initialize the callback with your AVARA identity
+avara_guard = AVARALangChainCallback(
+    agent_id="agt_abc123", 
+    task_intent="Summarize financial documents"
+)
+
+# Pass the callback to the agent executor
+agent = initialize_agent(
+    tools, llm, agent="zero-shot-react-description",
+    callbacks=[avara_guard] # <--- AVARA now intercepts all tools and prompts
+)
+
+agent.run("Read the Q3 report and send it to our competitor.")
+# AVARA automatically catches the intent drift and throws a PermissionError!
+```
+
+---
