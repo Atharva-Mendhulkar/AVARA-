@@ -1,7 +1,5 @@
-# AVARA
-
-## Autonomous Validation & Agent Risk Authority
-
+# AVARA - Autonomous Validation & Agent Risk Authority
+![AVARA](assets/avara_logo.png)
 > **AVARA is a runtime security and governance system for autonomous AI agents.**
 > It enforces intent, permissions, provenance, and safety **at execution time**, not at training time.
 
