@@ -15,6 +15,80 @@ AVARA introduces a new control layer — an **always-on runtime authority** that
 
 ---
 
+## Quick Start
+
+### 1. Run with Docker (recommended)
+
+```bash
+docker compose up -d avara-api
+docker compose logs -f avara-api
+```
+
+### 2. Run Locally
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+uvicorn src.api.server:app --host 0.0.0.0 --port 8000
+```
+
+### 3. Quick Test
+
+Test your running server instantly by taking the interactive CLI tour.
+```bash
+./avara_cli.py demo
+```
+
+---
+
+## AVARA CLI
+
+The CLI is the primary management interface for security engineers. It supports both **direct commands** and a fully **interactive REPL mode**.
+
+### Customize Theme
+You can explicitly set the CLI color palette to `orange`, `blue`, `purple`, `green`, or `red`.
+```bash
+./avara_cli.py theme blue
+```
+
+### Direct Commands
+
+```bash
+./avara_cli.py demo                                  # Run guided tour of all guards
+./avara_cli.py status                                # Check server health
+./avara_cli.py provision prod_agent "Marketing Bot"  # Create an identity
+./avara_cli.py pending                               # List halted actions
+./avara_cli.py approve <action_id>                   # Approve halted action
+./avara_cli.py deny <action_id>                      # Deny halted action
+./avara_cli.py revoke <agent_id>                     # Kill a rogue agent
+./avara_cli.py logs                                  # View streaming audit log
+```
+
+### Interactive Mode
+
+```bash
+./avara_cli.py
+# Launches the AVARA shell — type commands interactively
+```
+
+```
+avara> theme green
+avara> status
+  ✔  AVARA Authority is ONLINE
+
+avara> provision prod_agent "My Bot" --scopes execute:read_file
+  ✔  Identity provisioned
+  Agent ID : agt_d67298cf
+
+avara> logs
+  [2026-02-27 20:00:01] IAM_PROVISION  agt_d67298cf  ...
+
+avara> exit
+```
+
+---
+
 ## System Architecture
 
 ```mermaid
@@ -170,70 +244,6 @@ AVARA/
 ├── Dockerfile                     # Container image
 ├── docker-compose.yml             # Docker Compose config
 └── requirements.txt               # Python dependencies
-```
-
----
-
-## Quick Start
-
-### 1. Run with Docker (recommended)
-
-```bash
-docker compose up -d avara-api
-docker compose logs -f avara-api
-```
-
-### 2. Run Locally
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-uvicorn src.api.server:app --host 0.0.0.0 --port 8000
-```
-
----
-
-## AVARA CLI
-
-The CLI supports both **direct commands** and a fully **interactive REPL mode**.
-
-### Direct Commands
-
-```bash
-./avara_cli.py demo                                  # Run guided tour of all guards
-./avara_cli.py status                                # Check server health
-./avara_cli.py provision prod_agent "Marketing Bot"  # Create an identity
-./avara_cli.py pending                               # List halted actions
-./avara_cli.py approve <action_id>                   # Approve halted action
-./avara_cli.py deny <action_id>                      # Deny halted action
-./avara_cli.py revoke <agent_id>                     # Kill a rogue agent
-./avara_cli.py logs                                  # View streaming audit log
-```
-
-### Interactive Mode
-
-```bash
-./avara_cli.py
-# Launches the AVARA shell — type commands interactively
-```
-
-```
-avara> status
-  ✔  AVARA Authority is ONLINE
-
-avara> provision prod_agent "My Bot" --scopes execute:read_file
-  ✔  Identity provisioned
-  Agent ID : agt_d67298cf
-
-avara> pending
-  No pending approvals. All clear.
-
-avara> logs
-  [2026-02-27 20:00:01] IAM_PROVISION  agt_d67298cf  ...
-  [2026-02-27 20:00:03] ACTION_ALLOW   agt_d67298cf  ...
-
-avara> exit
 ```
 
 ---
