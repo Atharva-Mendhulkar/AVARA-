@@ -10,7 +10,13 @@ import sys
 import os
 import glob
 import shlex
+import traceback
 from datetime import datetime
+
+try:
+    import readline
+except ImportError:
+    pass  # Windows or environment without readline support
 
 API_BASE = "http://127.0.0.1:8000"
 DB_PATH = "avara_state.db"
@@ -234,8 +240,14 @@ def cmd_logs(args):
         err(f"Could not read log file: {e}")
 
 # ─── Argument Parser (shared by direct + REPL) ───────────────────────────────
+class ReplArgumentParser(argparse.ArgumentParser):
+    """Custom parser that doesn't exit or print raw stderr on error."""
+    def error(self, message):
+        # Instead of exiting, we raise an exception that the REPL can catch cleanly
+        raise ValueError(message)
+
 def build_parser():
-    parser = argparse.ArgumentParser(add_help=False)
+    parser = ReplArgumentParser(add_help=False)
     sub = parser.add_subparsers(dest="command")
 
     p = sub.add_parser("provision")
@@ -306,11 +318,13 @@ def interactive_mode():
 
         try:
             args = parser.parse_args(tokens)
+        except ValueError as e:
+            err(f"Invalid command: {e}")
+            continue
         except SystemExit:
-            err(f"Unknown command: {BOLD}{tokens[0]}{RESET}. Type {BOLD}help{RESET} for available commands.")
             continue
 
-        if not hasattr(args, 'func'):
+        if not getattr(args, 'func', None):
             err(f"Unknown command: {BOLD}{raw}{RESET}. Type {BOLD}help{RESET} for available commands.")
             continue
 
